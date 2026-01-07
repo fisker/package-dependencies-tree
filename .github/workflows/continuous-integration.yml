@@ -43,8 +43,8 @@ jobs:
 
       - name: Install Fixtures
         run: |
-          echo "">yarn.lock
-          cat yarn.lock
+          yarn --update-lockfile
+          git diff
         env:
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
         working-directory: fixtures
