@@ -5,8 +5,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@std/path": "jsr:1.1.4",
-    "local-package": "file:./local-package"
+    "local-package": "file:local-package/package-dependencies-tree-local-package-1.0.0.tgz",
+    "search-closest": "<=1.1.0"
   },
   "devDependencies": {
     "deno-path-from-file-url": "0.0.6",
