@@ -34,10 +34,7 @@ test('Main', () => {
 test('Fixtures', async () => {
   const fixtures = new URL('./fixtures/', import.meta.url)
 
-  await spawn('yarn', ['--immutable'], {
-    cwd: fixtures,
-    env: {YARN_ENABLE_IMMUTABLE_INSTALLS: 'true'},
-  })
+  await spawn('yarn', ['--immutable'], {cwd: fixtures})
   const fixturesPackage = getDependencies(fixtures)
   const {file: fixturesPackageJsonFile} = fixturesPackage
 
