@@ -27,6 +27,8 @@ test('Main', () => {
     dependencies.devDependencies.size,
     Object.keys(packageJson.devDependencies ?? {}).length,
   )
+
+  assert.throws(() => getDependencies('./a-relative-path'))
 })
 
 test('Fixtures', async () => {
@@ -91,5 +93,24 @@ test('Fixtures', async () => {
       deepDependency.resolved,
       fixturesPackage.dependencies.get('@std/path').resolved,
     )
+  }
+
+  {
+    const nonExistsDependency = fixturesPackage.dependencies.get(
+      'non-exists-dependency',
+    )
+    assert.equal(nonExistsDependency, undefined)
+  }
+
+  {
+    const nonInstalledDependency = fixturesPackage.peerDependencies.get(
+      '@package-dependencies-tree/package-wont-install',
+    )
+    assert.equal(
+      nonInstalledDependency.name,
+      '@package-dependencies-tree/package-wont-install',
+    )
+    assert.equal(nonInstalledDependency.version, '1.0.0')
+    assert.equal(nonInstalledDependency.resolved, undefined)
   }
 })

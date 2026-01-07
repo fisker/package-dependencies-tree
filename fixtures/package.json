@@ -11,5 +11,8 @@
   "devDependencies": {
     "deno-path-from-file-url": "0.0.6",
     "renamed-deno-path-from-file-url": "npm:deno-path-from-file-url@0.0.6"
+  },
+  "peerDependencies": {
+    "@package-dependencies-tree/package-wont-install": "1.0.0"
   }
 }
