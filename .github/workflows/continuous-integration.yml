@@ -45,6 +45,8 @@ jobs:
         run: |
           yarn
           git diff
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
         working-directory: fixtures
 
       # - name: Download Artifact
