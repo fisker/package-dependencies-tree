@@ -39,25 +39,25 @@ test('Fixtures', async () => {
   const {file: fixturesPackageJsonFile} = fixturesPackage
 
   {
-    const jsrDependency = fixturesPackage.dependencies.get('@std/path')
-    assert.equal(jsrDependency.name, '@std/path')
-    assert.equal(jsrDependency.version, 'jsr:1.1.4')
-    assert.equal(jsrDependency.base, fixturesPackageJsonFile)
-    assert.equal(jsrDependency.type, 'dependencies')
+    const dependency = fixturesPackage.dependencies.get('search-closest')
+    assert.equal(dependency.name, 'search-closest')
+    assert.equal(dependency.version, '<=1.1.0')
+    assert.equal(dependency.base, fixturesPackageJsonFile)
+    assert.equal(dependency.type, 'dependencies')
 
     assert.equal(
-      jsrDependency.resolved.file,
+      dependency.resolved.file,
       url.fileURLToPath(
-        new URL('./node_modules/@std/path/package.json', fixtures),
+        new URL('./node_modules/search-closest/package.json', fixtures),
       ),
     )
-    assert.equal(jsrDependency.resolved.name, '@jsr/std__path')
-    assert.equal(jsrDependency.resolved.version, '1.1.4')
+    assert.equal(dependency.resolved.name, 'search-closest')
+    assert.equal(dependency.resolved.version, '1.1.0')
 
     const deepDependency =
-      jsrDependency.resolved.dependencies.get('@jsr/std__internal')
+      dependency.resolved.dependencies.get('find-in-directory')
     assert.ok(deepDependency)
-    assert.equal(deepDependency.base, jsrDependency.resolved.file)
+    assert.equal(deepDependency.base, dependency.resolved.file)
   }
 
   {
@@ -75,6 +75,7 @@ test('Fixtures', async () => {
     const localDependency = fixturesPackage.dependencies.get('local-package')
     assert.equal(localDependency.name, 'local-package')
     assert.equal(localDependency.version, 'file:./local-package')
+    assert.equal(localDependency.type, 'dependencies')
     assert.equal(
       localDependency.resolved.name,
       '@package-dependencies-tree/local-package',
@@ -82,13 +83,13 @@ test('Fixtures', async () => {
     assert.equal(localDependency.resolved.version, '1.0.0')
 
     const deepDependency =
-      localDependency.resolved.peerDependencies.get('@std/path')
-    assert.equal(deepDependency.name, '@std/path')
+      localDependency.resolved.peerDependencies.get('search-closest')
+    assert.equal(deepDependency.name, 'search-closest')
     assert.equal(deepDependency.version, '*')
     assert.equal(deepDependency.type, 'peerDependencies')
     assert.equal(
       deepDependency.resolved,
-      fixturesPackage.dependencies.get('@std/path').resolved,
+      fixturesPackage.dependencies.get('search-closest').resolved,
     )
   }
 
