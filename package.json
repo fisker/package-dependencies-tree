@@ -17,6 +17,10 @@
   "sideEffects": false,
   "type": "module",
   "exports": "./index.js",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "build": "run-p clean \"build:*\"",
     "build:types": "tsc --emitDeclarationOnly --noEmit false",
@@ -35,11 +39,11 @@
     "lint:package-json": "yarn run fix:package-json --check",
     "lint:prettier": "prettier . --check",
     "prepare": "husky install",
+    "release": "release-it",
     "test": "run-p \"test:*\"",
     "test:js": "node --test test.js",
     "test:types": "yarn build && tsd",
-    "test-coverage": "c8 yarn test",
-    "release": "release-it"
+    "test-coverage": "c8 yarn test"
   },
   "c8": {
     "include": [
@@ -50,10 +54,6 @@
       "text"
     ]
   },
-  "files": [
-    "index.js",
-    "index.d.ts"
-  ],
   "devDependencies": {
     "@fisker/eslint-config": "15.4.0",
     "@fisker/lint-staged-config": "3.4.0",
