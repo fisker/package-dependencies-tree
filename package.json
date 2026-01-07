@@ -38,7 +38,8 @@
     "test": "run-p \"test:*\"",
     "test:js": "node --test test.js",
     "test:types": "yarn build && tsd",
-    "test-coverage": "c8 yarn test"
+    "test-coverage": "c8 yarn test",
+    "release": "release-it"
   },
   "c8": {
     "include": [
