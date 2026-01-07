@@ -128,7 +128,8 @@ class PackageJsonImplementation extends EnumerableGetters {
     return this.#getDependencies('peerDependencies')
   }
   /**
-  @param {DependencyTypes} type
+  @template {DependencyTypes} DependencyType
+  @param {DependencyType} type
   */
   #getDependencies(type) {
     return mapGetOrInsertComputed(this.#dependenciesCache, type, () => {
@@ -150,6 +151,9 @@ class PackageJsonImplementation extends EnumerableGetters {
   }
 }
 
+/**
+@template {DependencyTypes} DependencyType
+*/
 class DependencyImplementation extends EnumerableGetters {
   /** @type {typeof VALUE_UNINITIALIZED | string | undefined} */
   #packageJsonFileCache = VALUE_UNINITIALIZED
@@ -160,7 +164,7 @@ class DependencyImplementation extends EnumerableGetters {
 
   /**
   @param {{
-    type: DependencyTypes,
+    type: DependencyType,
     name: string,
     version: string,
     base: string,

@@ -1,4 +1,4 @@
-import {expectType} from 'tsd'
+import {expectType, expectNotType} from 'tsd'
 import getPackageDependencies, {
   type PackageJson,
   type Dependency,
@@ -11,6 +11,8 @@ expectType<string>(packageJson.version)
 expectType<string>(packageJson.file)
 expectType<string>(packageJson.data.name)
 expectType<string>(packageJson.data.version)
+expectType<"dependencies">(packageJson.dependencies.get('package-name')!.type)
+expectNotType<"dependencies">(packageJson.devDependencies.get('package-name')!.type)
 
 const dependency = packageJson.dependencies.get('package-name')!
 expectType<Dependency>(dependency)
