@@ -10,7 +10,7 @@ __metadata:
   resolution: "@package-dependencies-tree/fixtures@workspace:."
   dependencies:
     deno-path-from-file-url: "npm:0.0.6"
-    local-package: "file:./local-package"
+    local-package: "file:local-package/package-dependencies-tree-local-package-1.0.0.tgz"
     renamed-deno-path-from-file-url: "npm:deno-path-from-file-url@0.0.6"
     search-closest: "npm:<=1.1.0"
   peerDependencies:
@@ -43,12 +43,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"local-package@file:./local-package::locator=%40package-dependencies-tree%2Ffixtures%40workspace%3A.":
+"local-package@file:local-package/package-dependencies-tree-local-package-1.0.0.tgz::locator=%40package-dependencies-tree%2Ffixtures%40workspace%3A.":
   version: 1.0.0
-  resolution: "local-package@file:./local-package#./local-package::hash=fed793&locator=%40package-dependencies-tree%2Ffixtures%40workspace%3A."
+  resolution: "local-package@file:local-package/package-dependencies-tree-local-package-1.0.0.tgz#local-package/package-dependencies-tree-local-package-1.0.0.tgz::hash=a19d82&locator=%40package-dependencies-tree%2Ffixtures%40workspace%3A."
   peerDependencies:
     search-closest: "*"
-  checksum: 10c0/d7c3a584caa483da3d4f4aab820a425881f582b58b82334abcbf51efc57b6a1d75d409f1c167608b12a1a41f4f003895495dfb88555f129568457d454d41493a
+  checksum: 10c0/bed98495d295a97f5a3e0f6e676e74645c8beef51e7b040dbe73c561aa710b52566f8b4aee79cd5a5e1527908f1309dfaecf8f230a7c1015c096169a3524d7dd
   languageName: node
   linkType: hard
 

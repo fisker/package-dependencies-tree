@@ -74,7 +74,10 @@ test('Fixtures', async () => {
   {
     const localDependency = fixturesPackage.dependencies.get('local-package')
     assert.equal(localDependency.name, 'local-package')
-    assert.equal(localDependency.version, 'file:./local-package')
+    assert.equal(
+      localDependency.version,
+      'file:local-package/package-dependencies-tree-local-package-1.0.0.tgz',
+    )
     assert.equal(localDependency.type, 'dependencies')
     assert.equal(
       localDependency.resolved.name,
