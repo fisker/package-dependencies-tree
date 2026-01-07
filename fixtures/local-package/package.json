@@ -1,0 +1,8 @@
+{
+  "name": "@package-dependencies-tree/local-package",
+  "private": true,
+  "version": "1.0.0",
+  "peerDependencies": {
+    "@std/path": "*"
+  }
+}

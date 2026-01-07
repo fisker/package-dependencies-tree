@@ -1,0 +1,15 @@
+{
+  "name": "@package-dependencies-tree/fixtures",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@std/path": "jsr:1.1.4",
+    "local-package": "file:./local-package"
+  },
+  "devDependencies": {
+    "deno-path-from-file-url": "0.0.6",
+    "renamed-deno-path-from-file-url": "npm:deno-path-from-file-url@0.0.6"
+  }
+}
