@@ -34,6 +34,10 @@ test('Main', () => {
 test('Fixtures', async () => {
   const fixtures = new URL('./fixtures/', import.meta.url)
 
+  await spawn('npm', ['pack'], {
+    cwd: new URL('./local-package', fixtures),
+    stdio: 'inherit',
+  })
   await spawn('yarn', ['--immutable'], {cwd: fixtures, stdio: 'inherit'})
   const fixturesPackage = getDependencies(fixtures)
   const {file: fixturesPackageJsonFile} = fixturesPackage
