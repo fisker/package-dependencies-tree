@@ -17,7 +17,6 @@
   "sideEffects": false,
   "type": "module",
   "exports": "./index.js",
-  "main": "index.js",
   "scripts": {
     "build": "run-p clean \"build:*\"",
     "build:types": "tsc --emitDeclarationOnly --noEmit false",

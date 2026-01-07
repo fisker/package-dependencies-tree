@@ -16,7 +16,7 @@
 ## Install
 
 ```bash
-yarn add package-dependencies-tree
+yarn add package-dependencies-tree --dev
 ```
 
 ## Usage
