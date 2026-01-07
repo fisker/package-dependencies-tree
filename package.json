@@ -18,6 +18,8 @@
   "exports": "./index.js",
   "main": "index.js",
   "scripts": {
+    "build": "run-p clean \"build:*\"",
+    "build:types": "tsc --emitDeclarationOnly --noEmit false",
     "clean": "run-p \"clean:*\"",
     "clean:dist": "del-cli dist",
     "dist": "run-p \"dist:*\"",
@@ -33,13 +35,29 @@
     "lint:package-json": "yarn run fix:package-json --check",
     "lint:prettier": "prettier . --check",
     "prepare": "husky install",
-    "test": "node --test"
+    "test": "run-p \"test:*\"",
+    "test:js": "node --test test.js",
+    "test:types": "yarn build && tsd",
+    "test-coverage": "c8 yarn test"
+  },
+  "c8": {
+    "include": [
+      "index.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  },
+  "dependencies": {
+    "type-fest": "5.3.1"
   },
   "devDependencies": {
     "@fisker/eslint-config": "15.4.0",
     "@fisker/lint-staged-config": "3.4.0",
     "@fisker/markdownlint-cli2-config": "0.1.0",
     "@fisker/prettier-config": "5.3.0",
+    "@types/node": "25.0.3",
     "del-cli": "7.0.0",
     "eslint": "9.39.2",
     "husky": "9.1.7",
@@ -48,11 +66,13 @@
     "nano-spawn": "^2.0.0",
     "npm-run-all2": "8.0.4",
     "prettier": "3.7.4",
-    "sort-package-json": "3.6.0"
+    "sort-package-json": "3.6.0",
+    "tsd": "0.33.0",
+    "typescript": "5.9.3"
   },
+  "packageManager": "yarn@4.12.0",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },
-  "packageManager": "yarn@4.12.0"
+  }
 }

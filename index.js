@@ -1,80 +1,107 @@
-import { findPackageJSON } from "node:module";
-import fs from "node:fs";
-import process from "node:process";
-import path from "node:path";
-import url from "node:url";
-import { inspect } from "node:util";
+import fs from 'node:fs'
+import {findPackageJSON} from 'node:module'
+import path from 'node:path'
+import process from 'node:process'
+import url from 'node:url'
 
-const VALUE_UNINITIALIZED = Symbol("VALUE_UNINITIALIZED");
-const DEPENDENCY_TYPES = [
-  "dependencies",
-  "devDependencies",
-  "peerDependencies",
-];
+/**
+@import {PackageJson as PackageJsonData} from 'type-fest';
+@typedef {'dependencies' | 'devDependencies' | 'peerDependencies'} DependencyTypes
+@typedef {DependencyImplementation} Dependency
+@typedef {PackageJsonImplementation} PackageJson
+*/
+
+const VALUE_UNINITIALIZED = Symbol('VALUE_UNINITIALIZED')
 
 // https://github.com/tc39/proposal-upsert
+/**
+@template {any} InputValue
+@template {(value: InputValue) => any} InputFunction
+@param {Map<InputValue, ReturnType<InputFunction>>} map
+@param {InputValue} value
+@param {InputFunction} function_
+@returns {ReturnType<InputFunction>}
+*/
 const mapGetOrInsertComputed = (map, value, function_) =>
-  (map.has(value) ? map : map.set(value, function_(value))).get(value);
+  (map.has(value) ? map : map.set(value, function_(value))).get(value)
+/**
+@template {(value: any) => any} InputFunction
+@param {InputFunction} function_
+*/
 const memorized = (function_) => (value) =>
-  mapGetOrInsertComputed(new Map(), value, function_);
-const loadPackageJson = memorized((packageJsonFile) =>
-  JSON.parse(fs.readFileSync(packageJsonFile)),
-);
+  mapGetOrInsertComputed(new Map(), value, function_)
+const loadPackageJson = memorized(
+  /**
+  @param {string} packageJsonFile
+  @returns {PackageJsonData}
+  */
+  (packageJsonFile) =>
+    // eslint-disable-next-line unicorn/prefer-json-parse-buffer
+    JSON.parse(fs.readFileSync(packageJsonFile, 'utf8')),
+)
 
+/**
+@param {EnumerableGetters} object
+@param {(PackageJsonImplementation | DependencyImplementation)['constructor']} constructor
+*/
 const defineEnumerableGetters = (object, constructor) => {
-  const descriptors = Object.getOwnPropertyDescriptors(constructor.prototype);
+  const descriptors = Object.getOwnPropertyDescriptors(constructor.prototype)
   for (const [property, descriptor] of Object.entries(descriptors)) {
     if (
       descriptor.enumerable === false &&
-      typeof descriptor.get === "function"
+      typeof descriptor.get === 'function'
     ) {
       Object.defineProperty(object, property, {
         ...descriptor,
         enumerable: true,
-      });
+      })
     }
-  }
-};
-
-class EnumerableGetters {
-  constructor() {
-    defineEnumerableGetters(this, new.target);
   }
 }
 
-class PackageJson extends EnumerableGetters {
-  static #instanceCache = new Map();
+class EnumerableGetters {
+  constructor() {
+    defineEnumerableGetters(this, new.target)
+  }
+}
 
-  file;
-  #packageJsonFile;
-  #dependenciesCache = new Map();
+class PackageJsonImplementation extends EnumerableGetters {
+  // eslint-disable-next-line sonarjs/public-static-readonly
+  static #instanceCache =
+    /** @type {Map<string, PackageJsonImplementation>} */ (new Map())
 
-  constructor(packageJsonFile) {
+  /**
+  @param {string} packageJsonFile
+  */
+  static create(packageJsonFile) {
+    const instanceCache = PackageJsonImplementation.#instanceCache
     return mapGetOrInsertComputed(
-      PackageJson.#instanceCache,
+      instanceCache,
       packageJsonFile,
-      () => {
-        super();
-        this.file = packageJsonFile;
-        this.#packageJsonFile = packageJsonFile;
+      () => new PackageJsonImplementation(packageJsonFile),
+    )
+  }
 
-        for (const type of DEPENDENCY_TYPES) {
-          Object.defineProperty(this, type, {enumerable: true,
-            get: () => this.#getDependencies(type),
-          });
-        }
+  file
+  #packageJsonFile
+  #dependenciesCache = new Map()
 
-        return this;
-      },
-    );
+  /**
+  @internal
+  @param {string} packageJsonFile
+  */
+  constructor(packageJsonFile) {
+    super()
+    this.file = packageJsonFile
+    this.#packageJsonFile = packageJsonFile
   }
 
   get name() {
-    return this.#packageJsonData.name;
+    return this.#packageJsonData.name
   }
 
   get version() {
-    return this.#packageJsonData.version;
+    return this.#packageJsonData.version
   }
 
   get data() {
@@ -82,82 +109,112 @@ class PackageJson extends EnumerableGetters {
   }
 
   get #packageJsonData() {
-    return loadPackageJson(this.#packageJsonFile);
+    return loadPackageJson(this.#packageJsonFile)
   }
 
+  get dependencies() {
+    return this.#getDependencies('dependencies')
+  }
+
+  get devDependencies() {
+    return this.#getDependencies('devDependencies')
+  }
+
+  get peerDependencies() {
+    return this.#getDependencies('peerDependencies')
+  }
+  /**
+  @param {DependencyTypes} type
+  */
   #getDependencies(type) {
     return mapGetOrInsertComputed(this.#dependenciesCache, type, () => {
-      const packageJsonData = this.#packageJsonData;
-      const dependencies = packageJsonData[type] ?? {};
+      const packageJsonData = this.#packageJsonData
+      const dependencies = packageJsonData[type] ?? {}
 
       return new Map(
         Object.entries(dependencies).map(([name, version]) => [
           name,
-          new Dependency({
+          new DependencyImplementation({
             name,
             version,
             type,
             base: this.#packageJsonFile,
           }),
         ]),
-      );
-    });
+      )
+    })
   }
 }
 
-class Dependency  extends EnumerableGetters {
-  #packageJsonFileCache = VALUE_UNINITIALIZED;
-  name;
-  version;
-  base;
-  type;
+class DependencyImplementation extends EnumerableGetters {
+  /** @type {typeof VALUE_UNINITIALIZED | string | undefined} */
+  #packageJsonFileCache = VALUE_UNINITIALIZED
+  name
+  version
+  base
+  type
 
-  constructor({ type, name, version, base }) {
+  /**
+  @param {{
+    type: DependencyTypes,
+    name: string,
+    version: string,
+    base: string,
+  }} param0
+  */
+  constructor({type, name, version, base}) {
     super()
-    this.type = type;
-    this.name = name;
-    this.version = version;
-    this.base = base;
+    this.type = type
+    this.name = name
+    this.version = version
+    this.base = base
   }
 
   get #packageJsonFile() {
     if (this.#packageJsonFileCache === VALUE_UNINITIALIZED) {
-      const {name, base} = this;
-      let packageJsonFile;
+      const {name, base} = this
+      let packageJsonFile
       try {
-        packageJsonFile = findPackageJSON(name, base);
+        packageJsonFile = findPackageJSON(name, base)
       } catch (error) {
-        if (error?.code !== "ERR_MODULE_NOT_FOUND") {
-          throw error;
+        if (error?.code !== 'ERR_MODULE_NOT_FOUND') {
+          throw error
         }
       }
 
-      this.#packageJsonFileCache = packageJsonFile;
+      this.#packageJsonFileCache = packageJsonFile
     }
-    return this.#packageJsonFileCache;
+    return this.#packageJsonFileCache
   }
 
   get file() {
-    return this.#packageJsonFile;
+    return this.#packageJsonFile
   }
 
   get resolved() {
-    const packageJsonFile = this.#packageJsonFile;
+    const packageJsonFile = this.#packageJsonFile
     if (!packageJsonFile) {
-      return;
+      // eslint-disable-next-line getter-return
+      return
     }
 
-    return new PackageJson(packageJsonFile);
+    return PackageJsonImplementation.create(packageJsonFile)
   }
 }
 
+/**
+@param {string | URL} [packageJsonFile]
+@returns {PackageJson}
+*/
 function getPackageDependencies(packageJsonFile = process.cwd()) {
   if (packageJsonFile instanceof URL) {
     packageJsonFile = url.fileURLToPath(packageJsonFile)
   }
 
   if (!path.isAbsolute(packageJsonFile)) {
-    throw new Error(`Expected 'packageJsonFile' to an URL or absolute path to package.json file or it's directory.`)
+    throw new Error(
+      "Expected 'packageJsonFile' to an URL or absolute path to package.json file or it's directory.",
+    )
   }
 
   if (path.basename(packageJsonFile) !== 'package.json') {
@@ -165,8 +222,7 @@ function getPackageDependencies(packageJsonFile = process.cwd()) {
   }
 
   loadPackageJson(packageJsonFile)
-  return new PackageJson(packageJsonFile)
+  return PackageJsonImplementation.create(packageJsonFile)
 }
 
-export {getPackageDependencies}
-
+export default getPackageDependencies
