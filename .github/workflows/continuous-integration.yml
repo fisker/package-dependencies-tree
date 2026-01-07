@@ -43,7 +43,9 @@ jobs:
 
       - name: Install Fixtures
         run: |
+          cat yarn.lock
           echo "">yarn.lock
+          cat yarn.lock
           yarn
           git diff
         env:
