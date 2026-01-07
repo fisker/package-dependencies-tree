@@ -1,5 +1,5 @@
 {
-  "[javascript][typescript][markdown][jsonc]": {
+  "[javascript][typescript][markdown][json][jsonc]": {
     "editor.defaultFormatter": "prettier.prettier-vscode",
     "editor.formatOnSave": true
   },

@@ -49,6 +49,10 @@
       "text"
     ]
   },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "devDependencies": {
     "@fisker/eslint-config": "15.4.0",
     "@fisker/lint-staged-config": "3.4.0",
