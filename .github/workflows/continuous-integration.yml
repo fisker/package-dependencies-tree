@@ -26,8 +26,6 @@ jobs:
         #     node_version: "12"
     name: Node.js ${{ matrix.node_version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    env:
-      YARN_ENABLE_IMMUTABLE_INSTALLS: false
     # needs: [build]
     steps:
       - name: Checkout
@@ -39,7 +37,13 @@ jobs:
           node-version: ${{ matrix.node_version }}
 
       - name: Install Dependencies
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
         run: yarn
+
+      - name: Install Fixtures
+        run: yarn --immutable
+        working-directory: fixtures
 
       # - name: Download Artifact
       #   uses: actions/download-artifact@v4
