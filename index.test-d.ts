@@ -9,8 +9,8 @@ expectType<PackageJson>(packageJson)
 expectType<string>(packageJson.name)
 expectType<string>(packageJson.version)
 expectType<string>(packageJson.file)
-expectType<string>(packageJson.data.name!)
-expectType<string>(packageJson.data.version!)
+expectType<string>(packageJson.data.name)
+expectType<string>(packageJson.data.version)
 
 const dependency = packageJson.dependencies.get('package-name')!
 expectType<Dependency>(dependency)

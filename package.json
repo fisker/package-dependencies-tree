@@ -49,9 +49,6 @@
       "text"
     ]
   },
-  "dependencies": {
-    "type-fest": "5.3.1"
-  },
   "devDependencies": {
     "@fisker/eslint-config": "15.4.0",
     "@fisker/lint-staged-config": "3.4.0",

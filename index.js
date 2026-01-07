@@ -5,7 +5,11 @@ import process from 'node:process'
 import url from 'node:url'
 
 /**
-@import {PackageJson as PackageJsonData} from 'type-fest';
+@typedef {string | number | boolean | null} JsonPrimitive
+@typedef {JsonValue[]} JsonArray
+@typedef {{[Key in string]: JsonValue}} JsonObject
+@typedef {JsonPrimitive | JsonObject | JsonArray} JsonValue
+@typedef {{name: string, version: string} & JsonObject} PackageJsonData
 @typedef {'dependencies' | 'devDependencies' | 'peerDependencies'} DependencyTypes
 @typedef {DependencyImplementation} Dependency
 @typedef {PackageJsonImplementation} PackageJson
