@@ -1,10 +1,10 @@
-import {expectType, expectNotType} from 'tsd'
-import getPackageDependencies, {
+import {expectType, expectNotType, expectAssignable} from 'tsd'
+import getDependencies, {
   type PackageJson,
   type Dependency,
 } from './index.js'
 
-const packageJson = getPackageDependencies()
+const packageJson = getDependencies()
 expectType<PackageJson>(packageJson)
 expectType<string>(packageJson.name)
 expectType<string>(packageJson.version)
@@ -15,19 +15,18 @@ expectType<"dependencies">(packageJson.dependencies.get('package-name')!.type)
 expectNotType<"dependencies">(packageJson.devDependencies.get('package-name')!.type)
 
 const dependency = packageJson.dependencies.get('package-name')!
-expectType<Dependency>(dependency)
+expectAssignable<Dependency>(dependency)
 expectType<string>(dependency.name)
 expectType<string>(dependency.version)
 expectType<string>(dependency.base)
-expectType<string>(dependency.type)
-expectType<string>(dependency.file)
+expectAssignable<string>(dependency.type)
 expectType<PackageJson>(dependency.resolved)
 
-expectType<PackageJson>(getPackageDependencies('/path/to/directory/'))
+expectType<PackageJson>(getDependencies('/path/to/directory/'))
 expectType<PackageJson>(
-  getPackageDependencies(`/path/to/directory/package.json`),
+  getDependencies(`/path/to/directory/package.json`),
 )
-expectType<PackageJson>(getPackageDependencies(new URL('./', import.meta.url)))
+expectType<PackageJson>(getDependencies(new URL('./', import.meta.url)))
 expectType<PackageJson>(
-  getPackageDependencies(new URL('./package.json', import.meta.url)),
+  getDependencies(new URL('./package.json', import.meta.url)),
 )

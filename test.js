@@ -3,11 +3,11 @@ import path from 'node:path'
 import test from 'node:test'
 import url from 'node:url'
 import spawn from 'nano-spawn'
-import getPackageDependencies from './index.js'
+import getDependencies from './index.js'
 import packageJson from './package.json' with {type: 'json'}
 
 test('Main', () => {
-  const dependencies = getPackageDependencies()
+  const dependencies = getDependencies()
 
   for (const packageJsonFile of [
     import.meta.dirname,
@@ -15,7 +15,7 @@ test('Main', () => {
     new URL('./package.json', import.meta.url),
     new URL('./', import.meta.url),
   ]) {
-    assert.equal(getPackageDependencies(packageJsonFile), dependencies)
+    assert.equal(getDependencies(packageJsonFile), dependencies)
   }
 
   assert.deepEqual(dependencies.data, packageJson)
@@ -36,7 +36,7 @@ test('Fixtures', async () => {
     cwd: fixtures,
     env: {YARN_ENABLE_IMMUTABLE_INSTALLS: 'true'},
   })
-  const fixturesPackage = getPackageDependencies(fixtures)
+  const fixturesPackage = getDependencies(fixtures)
   const {file: fixturesPackageJsonFile} = fixturesPackage
 
   {
@@ -45,8 +45,9 @@ test('Fixtures', async () => {
     assert.equal(jsrDependency.version, 'jsr:1.1.4')
     assert.equal(jsrDependency.base, fixturesPackageJsonFile)
     assert.equal(jsrDependency.type, 'dependencies')
+
     assert.equal(
-      jsrDependency.file,
+      jsrDependency.resolved.file,
       url.fileURLToPath(
         new URL('./node_modules/@std/path/package.json', fixtures),
       ),
@@ -57,7 +58,7 @@ test('Fixtures', async () => {
     const deepDependency =
       jsrDependency.resolved.dependencies.get('@jsr/std__internal')
     assert.ok(deepDependency)
-    assert.equal(deepDependency.base, jsrDependency.file)
+    assert.equal(deepDependency.base, jsrDependency.resolved.file)
   }
 
   {

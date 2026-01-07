@@ -86,6 +86,7 @@ class PackageJsonImplementation extends EnumerableGetters {
     )
   }
 
+  /** Path to the `package.json` file */
   file
   #packageJsonFile
   #dependenciesCache = new Map()
@@ -100,14 +101,17 @@ class PackageJsonImplementation extends EnumerableGetters {
     this.#packageJsonFile = packageJsonFile
   }
 
+  /** The package name */
   get name() {
     return this.#packageJsonData.name
   }
 
+  /** The package version */
   get version() {
     return this.#packageJsonData.version
   }
 
+  /** The `package.json` file data */
   get data() {
     return this.#packageJsonData
   }
@@ -116,14 +120,17 @@ class PackageJsonImplementation extends EnumerableGetters {
     return loadPackageJson(this.#packageJsonFile)
   }
 
+  /** Map of `dependencies` in the `package.json` file */
   get dependencies() {
     return this.#getDependencies('dependencies')
   }
 
+  /** Map of `devDependencies` in the `package.json` file */
   get devDependencies() {
     return this.#getDependencies('devDependencies')
   }
 
+  /** Map of `peerDependencies` in the `package.json` file */
   get peerDependencies() {
     return this.#getDependencies('peerDependencies')
   }
@@ -152,14 +159,22 @@ class PackageJsonImplementation extends EnumerableGetters {
 }
 
 /**
-@template {DependencyTypes} DependencyType
+@template {DependencyTypes} [DependencyType = DependencyTypes]
 */
 class DependencyImplementation extends EnumerableGetters {
   /** @type {typeof VALUE_UNINITIALIZED | string | undefined} */
   #packageJsonFileCache = VALUE_UNINITIALIZED
+
+  /** Dependency install name */
   name
+
+  /** Dependency install version range */
   version
+
+  /** The `package.json` file path to the dependent package */
   base
+
+  /** Dependency type */
   type
 
   /**
@@ -195,10 +210,7 @@ class DependencyImplementation extends EnumerableGetters {
     return this.#packageJsonFileCache
   }
 
-  get file() {
-    return this.#packageJsonFile
-  }
-
+  /** The resolved Dependency, `undefined` if can not resolve. */
   get resolved() {
     const packageJsonFile = this.#packageJsonFile
     if (!packageJsonFile) {
@@ -211,10 +223,20 @@ class DependencyImplementation extends EnumerableGetters {
 }
 
 /**
-@param {string | URL} [packageJsonFile]
+Get dependencies from package.json file.
+
+@param {string | URL} [packageJsonFile] - URL or absolute path to package.json file or it's directory.
 @returns {PackageJson}
+
+@example
+```js
+import getDependencies from 'package-dependencies-tree'
+
+console.log(getDependencies().dependencies.size)
+// 10
+```
 */
-function getPackageDependencies(packageJsonFile = process.cwd()) {
+function getDependencies(packageJsonFile = process.cwd()) {
   if (packageJsonFile instanceof URL) {
     packageJsonFile = url.fileURLToPath(packageJsonFile)
   }
@@ -233,4 +255,4 @@ function getPackageDependencies(packageJsonFile = process.cwd()) {
   return PackageJsonImplementation.create(packageJsonFile)
 }
 
-export default getPackageDependencies
+export default getDependencies

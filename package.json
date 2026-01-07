@@ -1,6 +1,7 @@
 {
   "name": "package-dependencies-tree",
   "version": "0.0.0",
+"description": "Get package dependencies tree",
   "homepage": "https://github.com/fisker/package-dependencies-tree#readme",
   "bugs": {
     "url": "https://github.com/fisker/package-dependencies-tree/issues"
