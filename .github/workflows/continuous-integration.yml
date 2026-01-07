@@ -42,7 +42,9 @@ jobs:
         run: yarn
 
       - name: Install Fixtures
-        run: yarn --immutable
+        run: |
+          yarn
+          git diff
         working-directory: fixtures
 
       # - name: Download Artifact
